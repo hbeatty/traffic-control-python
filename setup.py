@@ -22,12 +22,18 @@ Setup file for egg builds
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+import re
+
 from setuptools import setup, find_packages
+
+with open(os.path.join(os.path.dirname(__file__), 'traffic_control', '__init__.py')) as f:
+    version = re.search("__version__ = '([^']+)'", f.read()).group(1)
 
 # setup meta data and entry points
 setup(
     name='traffic-control',
-    version="0.0.23",
+    version = version,
     description="Traffic Control Python API",
     author="Steve Malenfant, Hank Beatty",
     author_email="smalenfant@users.noreply.github.com, hbeatty@users.noreply.github.com",
@@ -59,8 +65,8 @@ setup(
         #'Programming Language :: Python :: 3.5',
     ],
 
-    #install_requires = ['requests'],
+    install_requires = ['requests'],
     packages=find_packages(),
-    package_data={'traffic-control':['docs/*','traffic-control/*']},
+    package_data={'traffic-control':['docs/*','traffic_control/*']},
     include_package_data=True    
     )

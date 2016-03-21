@@ -22,8 +22,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import json
+
 from traffic_control import TrafficOps as to
 
-base_url = "https://cdn3cdcms0001.coxlab.net"
-x = to(base_url, "chs", "w@term@rk");
+#base_url = "https://cdn3cdcms0001.coxlab.net"
+base_url = "https://cms.kabletown.net"
+x = to(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
+#print json.loads(x.servers())
 print x.servers()
+
+print x.get_to_extensions()
+
+res = x.add_to_extension('TX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for TX errors', 'TX_ERR', 'CHECK_EXTENSION_BOOL')
+print res
