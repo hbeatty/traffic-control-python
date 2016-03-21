@@ -29,10 +29,22 @@ from traffic_control import TrafficOps as to
 #base_url = "https://cdn3cdcms0001.coxlab.net"
 base_url = "https://cms.kabletown.net"
 x = to(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
-#print json.loads(x.servers())
-print x.servers()
 
-print x.get_to_extensions()
+servers = x.get_servers()
+print servers
+
+to_extensions = x.get_to_extensions()
+print to_extensions
 
 res = x.add_to_extension('TX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for TX errors', 'TX_ERR', 'CHECK_EXTENSION_BOOL')
 print res
+
+res = x.add_to_extension('RX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for RX errors', 'RX_ERR', 'CHECK_EXTENSION_NUM')
+print res
+
+for i in servers:
+   print i['hostName']
+   #print i['response']['id'] + " "  i['response']['hostName']
+   if (i['type'] == 'MID') or (i['type'] == 'EDGE'):
+      res = x.post_serverchecks(i['id'], i['hostName'], 'RX_ERR', 21)
+      print res

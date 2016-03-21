@@ -45,21 +45,21 @@ class TrafficOps(object):
       __headers={"Content-Type": "application/x-www-form-urlencoded"}
 
       if password and (password != ''):
-         print "password matched"
+         #print "password matched"
          __data={"u": user, "p": password}
          try:
             r = self.s.post(url + '/login',data=__data,headers=__headers)
-            print r.text
+            #print r.text
          except self.requests.exceptions.RequestException as e:
             print e
             sys.exit(1)
       else:
-         print "trying token"
+         #print "trying token"
          __data={"t": token}
          try:
-            r = self.s.post(url + '/api/1.2/user/login/token',data=json.dumps(__data),headers=__headers)
-            print r.headers
-            print r.text
+            r = self.s.post(url + '/api/' + self.api_version + '/user/login/token', data=json.dumps(__data), headers=__headers)
+            #print r.headers
+            #print r.text
          except self.requests.exceptions.RequestException as e:
             print e
             sys.exit(1)
@@ -67,21 +67,24 @@ class TrafficOps(object):
       self.cookie={"Cookie": r.headers['set-cookie']}
       self.s.headers.update(self.cookie)
    
-   def servers(self):
-      """
-      Retrieves a list of servers in JSON format
-      """
-      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers.json")
-      r = self.get(__url)
-      return r.json()['response']
-   
    def get(self,url):
       try:
          return self.s.get(url)
       except requests.exceptions.RequestException as e:
          print e
          sys.exit(1)
+
+   # Servers
+   def get_servers(self):
+      """
+      Retrieves a list of servers in JSON format
+      """
+      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers.json")
+      r = self.get(__url)
+      return r.json()['response']
+      #return r.json()
    
+   # Federations
    def get_federations(self):
       """
       Retrieves a list of federations
@@ -108,7 +111,8 @@ class TrafficOps(object):
       """
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/to_extensions.json")
       r = self.get(__url)
-      return r.json()['response']
+      #return r.json()['response']
+      return r.json()
 
    def add_to_extension(self, name, script_ver, info_url, script_file, isactive, additional_config, description, servercheck_short_name, script_type):
       """
@@ -124,7 +128,7 @@ class TrafficOps(object):
               'servercheck_short_name': servercheck_short_name,
               'type': script_type}
 
-      print json.dumps(__data)
+      #print json.dumps(__data)
       #data = json.dumps(data)
 
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/to_extensions")
@@ -136,25 +140,24 @@ class TrafficOps(object):
       #return r.json()['response']
       return 1
 
-   # END TO extensions
-
-   def post_serverchecks(self, server_id, check_name, status):
+   # Serverchecks
+   def post_serverchecks(self, server_id, hostname, check_name, value):
       """
       Post an update to server checks
       """
-      data = {}
-      data['server_id'] = server_id
-      data['check_name'] = check_name
-      data['status'] = status
+      __data = {'id': server_id,
+                'hostname': hostname,
+                'servercheck_short_name': check_name,
+                'value': value}
 
 	   #my $r = { id => $server_id, servercheck_short_name => $check_name, value => $result };
 	   #my $path = "/api/" . API_VERSION . "/servercheck";
 	   #return $self->post_json( $path, $r );
 
-      print json.loads(data)
-      data = json.loads(data)
+      #print json.loads(data)
+      #data = json.loads(data)
 
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/servercheck")
-      r = self.post(__url, json=data)
-      return r.json()['response']
+      r = self.s.post(__url, data = json.dumps(__data))
+      return r.text
 
