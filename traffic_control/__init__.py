@@ -27,4 +27,4 @@ __all__ = [
     'TrafficOps',
 ]
 
-__version__ = '0.0.54'
+__version__ = '0.0.63'
