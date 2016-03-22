@@ -150,14 +150,16 @@ class TrafficOps(object):
                 'servercheck_short_name': check_name,
                 'value': value}
 
-	   #my $r = { id => $server_id, servercheck_short_name => $check_name, value => $result };
-	   #my $path = "/api/" . API_VERSION . "/servercheck";
-	   #return $self->post_json( $path, $r );
-
-      #print json.loads(data)
-      #data = json.loads(data)
-
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/servercheck")
       r = self.s.post(__url, data = json.dumps(__data))
       return r.text
+
+   # Delivery Services
+   def get_deliveryservices(self):
+      """
+      Retrieves a JSON formatted list of Delivery Services
+      """
+      __url = self.urljoin(self.url,"/api/" + self.api_version + "/deliveryservices.json")
+      r = self.get(__url)
+      return r.json()['response']
 

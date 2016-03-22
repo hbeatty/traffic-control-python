@@ -26,15 +26,21 @@ import json
 
 from traffic_control import TrafficOps as to
 
-#base_url = "https://cdn3cdcms0001.coxlab.net"
-base_url = "https://cms.kabletown.net"
+base_url = "https://cdn3cdcms0001.coxlab.net"
+#base_url = "https://cms.kabletown.net"
 x = to(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
 
 servers = x.get_servers()
-print servers
+for i in servers:
+   print i
 
 to_extensions = x.get_to_extensions()
-print to_extensions
+for i in to_extensions:
+   print i
+
+deliveryservices = x.get_deliveryservices()
+for i in deliveryservices:
+   print i
 
 res = x.add_to_extension('TX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for TX errors', 'TX_ERR', 'CHECK_EXTENSION_BOOL')
 print res

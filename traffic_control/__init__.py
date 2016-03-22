@@ -22,9 +22,11 @@
 #  limitations under the License.
 
 from .traffic_ops import TrafficOps
+from .traffic_monitor import TrafficMonitor 
 
 __all__ = [
     'TrafficOps',
+    'TrafficMonitor'
 ]
 
-__version__ = '0.0.63'
+__version__ = '0.1.1'
