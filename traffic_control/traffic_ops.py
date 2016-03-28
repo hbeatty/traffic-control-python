@@ -21,7 +21,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import socket
 import sys
 import json
 
@@ -35,11 +34,11 @@ class TrafficOps(object):
 
       self.api_version = '1.2'
       # need a try, except for the import of requests
-      self.requests=__import__ ('requests')
+      self.requests = __import__ ('requests')
       self.urljoin=__import__ ('requests').compat.urljoin
       self.requests.packages.urllib3.disable_warnings()
-      self.s=self.requests.Session()
-      self.url=url
+      self.s = self.requests.Session()
+      self.url = url
       self.s.verify=False
       self.s.timeout=5
       __headers={"Content-Type": "application/x-www-form-urlencoded"}
@@ -75,14 +74,21 @@ class TrafficOps(object):
          sys.exit(1)
 
    # Servers
-   def get_servers(self):
+   def get_servers(self, raw=False):
       """
-      Retrieves a list of servers in JSON format
+      Retrieves a list of servers in JSON format as a list
       """
+      __servers = {}
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers.json")
       r = self.get(__url)
-      return r.json()['response']
-      #return r.json()
+      if raw:
+         __servers = r.json()
+      else:
+         for i in r.json()['response']:
+            __servers[i['hostName']] = i
+            __servers[i['hostName']]['fqdn'] = i['hostName'] + "." + i['domainName']
+      #return r.json()['response']
+      return __servers
    
    # Federations
    def get_federations(self):
@@ -141,6 +147,22 @@ class TrafficOps(object):
       return 1
 
    # Serverchecks
+   def get_serverchecks(self,raw=False):
+      """
+      Retrieves a JSON formatted list of the server checks
+      """
+      __serverchecks = {}
+      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers/checks.json")
+      r = self.get(__url)
+      if raw:
+         #print r.json()['response']
+         return r.json()['response']
+      else:
+         for i in r.json()['response']:
+            __serverchecks[i['hostName']] = i
+
+         return __serverchecks
+
    def post_serverchecks(self, server_id, hostname, check_name, value):
       """
       Post an update to server checks

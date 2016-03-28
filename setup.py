@@ -65,7 +65,7 @@ setup(
         #'Programming Language :: Python :: 3.5',
     ],
 
-    install_requires = ['requests'],
+    install_requires = ['requests','argparse'],
     packages=find_packages(),
     package_data={'traffic-control':['docs/*','traffic_control/*']},
     include_package_data=True    
