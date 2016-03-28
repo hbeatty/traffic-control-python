@@ -21,49 +21,88 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import socket
 import sys
 import json
+
+# TODO add raw param to return exactly what is returned from the API
+# TODO make the convert to dict a function. the API retuns a list and I'm converting to dict. make this a public function
 
 class TrafficMonitor(object):
    """ TrafficMonitor Class """
 
-   def __init__(self, url, user = '', password = '', token = ''):
+   def __init__(self, to, raw=False):
       """
       Constructor for the TrafficMonitor class.
       """
 
-      self.api_version = '1.2'
-      # need a try, except for the import of requests
       self.requests=__import__ ('requests')
       self.urljoin=__import__ ('requests').compat.urljoin
-      self.requests.packages.urllib3.disable_warnings()
       self.s=self.requests.Session()
-      self.url=url
-      self.s.verify=False
-      self.s.timeout=5
-      __headers={"Content-Type": "application/x-www-form-urlencoded"}
+      self.servers = {}
 
-      if password and (password != ''):
-         #print "password matched"
-         __data={"u": user, "p": password}
-         try:
-            r = self.s.post(url + '/login',data=__data,headers=__headers)
-            #print r.text
-         except self.requests.exceptions.RequestException as e:
-            print e
-            sys.exit(1)
-      else:
-         #print "trying token"
-         __data={"t": token}
-         try:
-            r = self.s.post(url + '/api/' + self.api_version + '/user/login/token', data=json.dumps(__data), headers=__headers)
-            #print r.headers
-            #print r.text
-         except self.requests.exceptions.RequestException as e:
-            print e
-            sys.exit(1)
-        
-      self.cookie={"Cookie": r.headers['set-cookie']}
-      self.s.headers.update(self.cookie)
+      tmp = to.get_servers()
+      #print json.dumps(to.get_servers(), indent=3, separators=(',', ': '))
+      for i in tmp:
+         if (tmp[i]['type'] == 'RASCAL'):
+            self.servers[i] = tmp[i]
+            self.servers[i]['url'] = "http://" + i + "." + self.servers[i]['domainName']
+            self.servers[i]['fqdn'] = i + "." + self.servers[i]['domainName']
+
+      print json.dumps(self.servers, indent=3, separators=(',', ': '))
    
+   def get_cache_stats(self, tm='', hc='', stats='', wildcard='', cache=''):
+      """
+      /publish/CacheStats
+
+      Statistics gathered for each cache.
+      
+      Parameter   Type        Description
+      tm          string      Optional. Hostname (not FQDN) of one of the Traffic Monitor servers. If not specified will try each 'ONLINE' until recieves a response.
+      hc          int         The history count, number of items to display.
+      stats 	   string      A comma separated list of stats to display (without spaces).
+      wildcard    boolean     Controls whether specified stats should be treated as partial strings.
+      cache       string      optional hostname (not FQDN) of the cache to get stats for.
+      """
+
+      __url = ''
+      __query = ''
+      __path = "/publish/CacheStats"
+
+      # add the cache to the path if defined
+      if cache != '':
+         __path = __path + "/" + cache
+
+      # build the query
+      if hc != '':
+         __query = "?hc=" + str(hc)
+
+      if wildcard != '':
+         if __query != '':
+            __query = __query + "&wildcard=" + wildcard
+         else:
+            __query = "?wildcard=" + wildcard 
+
+      if stats != '':
+         if __query != '':
+            __query = __query + "&stats=" + stats
+         else:
+            __query = "?stats=" + stats
+
+      # append the query if needed
+      #if __query != '':
+      #   __url = self.urljoin(__url,__query)
+
+      for i in self.servers:
+         if (tm != '') and (tm == i):
+            __query = self.urljoin(self.servers[i][url],__path + __query)
+            break
+         else:
+            if self.servers[i]['status'] == "ONLINE":
+               #print "found online cache: " + self.servers[i]['hostName']
+               __url = self.urljoin(self.servers[i]['url'], __path + __query)
+               break
+               
+      #print __url
+      r = self.s.get(__url)
+      return r.json()['caches']
+

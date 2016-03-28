@@ -25,32 +25,44 @@
 import json
 
 from traffic_control import TrafficOps as to
+from traffic_control import TrafficMonitor as tm
 
-base_url = "https://cdn3cdcms0001.coxlab.net"
-#base_url = "https://cms.kabletown.net"
-x = to(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
+base_url = "https://cms.kabletown.net"
+to_conn = to(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
 
-servers = x.get_servers()
-for i in servers:
-   print i
+#servers = to_conn.get_servers()
+#for i in servers:
+#   print json.dumps(i, indent=3, separators=(',', ': '))
 
-to_extensions = x.get_to_extensions()
-for i in to_extensions:
-   print i
+serverchecks = to_conn.get_serverchecks()
+print json.dumps(serverchecks, indent=3, separators=(',', ': '))
+#for i in serverchecks:
+#   print json.dumps(serverchecks[i], indent=3, separators=(',', ': '))
 
-deliveryservices = x.get_deliveryservices()
-for i in deliveryservices:
-   print i
+#to_extensions = to_conn.get_to_extensions()
+#for i in to_extensions:
+#   print json.dumps(i, indent=3, separators=(',', ': '))
+#
+#deliveryservices = to_conn.get_deliveryservices()
+#for i in deliveryservices:
+#   print json.dumps(i, indent=3, separators=(',', ': '))
+#
+#res = to_conn.add_to_extension('TX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for TX errors', 'TX_ERR', 'CHECK_EXTENSION_BOOL')
+#print res
+#
+#res = to_conn.add_to_extension('RX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for RX errors', 'RX_ERR', 'CHECK_EXTENSION_NUM')
+#print res
+#
+#for i in servers:
+#   print i['hostName']
+#   #print i['response']['id'] + " "  i['response']['hostName']
+#   if (i['type'] == 'MID') or (i['type'] == 'EDGE'):
+#      res = to_conn.post_serverchecks(i['id'], i['hostName'], 'RX_ERR', 21)
+#      print res
+#
+#tm_conn = tm(to_conn)
 
-res = x.add_to_extension('TX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for TX errors', 'TX_ERR', 'CHECK_EXTENSION_BOOL')
-print res
-
-res = x.add_to_extension('RX_ERR', '0.0.1', '-', 'test.py', '1', '', 'Checks for RX errors', 'RX_ERR', 'CHECK_EXTENSION_NUM')
-print res
-
-for i in servers:
-   print i['hostName']
-   #print i['response']['id'] + " "  i['response']['hostName']
-   if (i['type'] == 'MID') or (i['type'] == 'EDGE'):
-      res = x.post_serverchecks(i['id'], i['hostName'], 'RX_ERR', 21)
-      print res
+#print json.dumps(tm_conn.servers, indent=3, separators=(',', ': '))
+#
+#cache_stats = y.get_cache_stats(stats="ats.proxy.process.cluster.write_bytes,ats.proxy.process.cluster.connections_open",hc="2")
+#print json.dumps(cache_stats, indent=3, separators=(',', ': '))
