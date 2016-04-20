@@ -89,6 +89,31 @@ class TrafficOps(object):
             __servers[i['hostName']]['fqdn'] = i['hostName'] + "." + i['domainName']
       #return r.json()['response']
       return __servers
+
+   def get_server(self,name):
+     """
+     Retrieves a single server
+     """
+     __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers/hostname/" + name + "/details.json")
+     r = self.get(__url)
+     __server = r.json()
+     return __server
+
+   # Cache Groups
+   def get_cachegroups(self, raw=False):
+     """
+     Retrieves a list of cache groups in JSON format as a list
+     """
+     __cg = {}
+     __url = self.urljoin(self.url,"/api/" + self.api_version + "/cachegroups.json")
+     r = self.get(__url)
+     if raw:
+        __cg = r.json()
+     else:
+        for i in r.json()['response']:
+         __cg[i['name']] = i
+     #return r.json()['response']
+     return __cg
    
    # Federations
    def get_federations(self):
@@ -184,4 +209,38 @@ class TrafficOps(object):
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/deliveryservices.json")
       r = self.get(__url)
       return r.json()['response']
+
+   def get_profiles(self):
+      """
+      Retrieves a JSON formatted list of Profiles and return a list
+      """
+      data = []
+      url = self.urljoin(self.url,"/api/" + self.api_version + "/profiles/trimmed.json")
+      profiles = self.get(url)
+
+      if not profiles:
+        return data
+
+      for profile in profiles.json():    
+        data.append(profile['name'])
+
+      return data
+
+   def get_profile_parameters(self, profile=None, raw=False, include_config_filter=None, include_name_filter=None):
+     """
+     Retrieve profile parameters and return value
+     Filtering: If you are filtering, you need to at least specify a list of keywords in include_config_filter.
+     """
+     data = []
+     if profile == None:
+       url = self.urljoin(self.url,"/api/" + self.api_version + "/parameters.json")
+     else:
+       url = self.urljoin(self.url,"/api/" + self.api_version + "/parameters/profile/" + profile + ".json")
+     r = self.get(url)
+
+     if not r:
+       return data
+  
+     return r.json()['response']
+              
 
