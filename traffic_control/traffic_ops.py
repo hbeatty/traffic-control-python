@@ -74,7 +74,7 @@ class TrafficOps(object):
          sys.exit(1)
 
    # Servers
-   def get_servers(self, raw=False):
+   def get_servers(self, raw=True):
       """
       Retrieves a list of servers in JSON format as a list
       """
@@ -100,7 +100,7 @@ class TrafficOps(object):
      return __server
 
    # Cache Groups
-   def get_cachegroups(self, raw=False):
+   def get_cachegroups(self, raw=True):
      """
      Retrieves a list of cache groups in JSON format as a list
      """
@@ -165,14 +165,14 @@ class TrafficOps(object):
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/to_extensions")
       r = self.s.post(__url, data = json.dumps(__data))
 
-      print r.headers
-      print r.text
+      #print r.headers
+      #print r.text
 
       #return r.json()['response']
       return 1
 
    # Serverchecks
-   def get_serverchecks(self,raw=False):
+   def get_serverchecks(self,raw=True):
       """
       Retrieves a JSON formatted list of the server checks
       """
@@ -226,7 +226,7 @@ class TrafficOps(object):
 
       return data
 
-   def get_profile_parameters(self, profile=None, raw=False, include_config_filter=None, include_name_filter=None):
+   def get_profile_parameters(self, profile=None, raw=True, include_config_filter=None, include_name_filter=None):
      """
      Retrieve profile parameters and return value
      Filtering: If you are filtering, you need to at least specify a list of keywords in include_config_filter.
