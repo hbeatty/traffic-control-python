@@ -28,13 +28,11 @@ import time
 from traffic_control import TrafficOps
 from traffic_control import TrafficMonitor as tm
 
-#base_url = "https://cms.kabletown.net"
-#to_conn = to(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
-to_conn = TrafficOps('https://cdn1cdcms0001.coxlab.net',user='chs',password='w@term@rk')
+base_url = "https://cms.kabletown.net"
+to_conn = TrafficOps(base_url, token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498');
 
 servers = to_conn.get_servers()
-for i in servers:
-   print json.dumps(i, indent=3, separators=(',', ': '))
+print json.dumps(servers, indent=3, separators=(',', ': '))
 
 cg = to_conn.get_cachegroups()
 for i in cg:
