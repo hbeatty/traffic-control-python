@@ -59,7 +59,7 @@ class TrafficOpsInventory(object):
 
         options = parser.parse_args()
         try:
-            self.to = TrafficOps('https://cms.kabletown.net', user='chs', password='w@term@rk')
+            self.to = TrafficOps('https://cms.kabletown.net', user='user', password='pass')
         except:
             print("Error: Could not connect to Traffic Ops API", file=sys.stderr)
 
