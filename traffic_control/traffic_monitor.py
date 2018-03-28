@@ -47,7 +47,7 @@ class TrafficMonitor(object):
             self.servers[i]['url'] = "http://" + i + "." + self.servers[i]['domainName']
             self.servers[i]['fqdn'] = i + "." + self.servers[i]['domainName']
 
-      print json.dumps(self.servers, indent=3, separators=(',', ': '))
+      # print json.dumps(self.servers, indent=3, separators=(',', ': '))
    
    def get_cache_stats(self, tm='', hc='', stats='', wildcard='', cache=''):
       """

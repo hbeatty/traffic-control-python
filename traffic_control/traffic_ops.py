@@ -172,11 +172,10 @@ class TrafficOps(object):
       Retrieves a JSON formatted list of the server checks
       """
       __serverchecks = {}
-      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers/checks.json")
+      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers/checks")
       r = self.get(__url)
       if raw:
-         #print r.json()['response']
-         return r.json()['response']
+         return r.json()
       else:
          for i in r.json()['response']:
             __serverchecks[i['hostName']] = i

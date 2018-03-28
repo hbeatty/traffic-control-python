@@ -22,7 +22,7 @@
 #  limitations under the License.
 
 from .traffic_ops import TrafficOps
-from .traffic_monitor import TrafficMonitor 
+from .traffic_monitor import TrafficMonitor
 
 __all__ = [
     'TrafficOps',
