@@ -87,7 +87,7 @@ class TrafficOps(object):
          for i in r.json()['response']:
             __servers[i['hostName']] = i
             __servers[i['hostName']]['fqdn'] = i['hostName'] + "." + i['domainName']
-      #return r.json()['response']
+
       return __servers
 
    def get_server(self,name):
@@ -149,6 +149,8 @@ class TrafficOps(object):
       """
       Adds TO extension
       """
+      # example return from TO: {u'alerts': [{u'text': u'Check Extension Loaded.', u'level': u'success'}], u'supplemental': {u'id': u'8'}}
+
       __data = {'name': name,
               'version': script_ver,
               'info_url': info_url,
@@ -159,17 +161,10 @@ class TrafficOps(object):
               'servercheck_short_name': servercheck_short_name,
               'type': script_type}
 
-      #print json.dumps(__data)
-      #data = json.dumps(data)
-
       __url = self.urljoin(self.url,"/api/" + self.api_version + "/to_extensions")
       r = self.s.post(__url, data = json.dumps(__data))
 
-      #print r.headers
-      #print r.text
-
-      #return r.json()['response']
-      return 1
+      return r.json()
 
    # Serverchecks
    def get_serverchecks(self,raw=True):
@@ -177,11 +172,10 @@ class TrafficOps(object):
       Retrieves a JSON formatted list of the server checks
       """
       __serverchecks = {}
-      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers/checks.json")
+      __url = self.urljoin(self.url,"/api/" + self.api_version + "/servers/checks")
       r = self.get(__url)
       if raw:
-         #print r.json()['response']
-         return r.json()['response']
+         return r.json()
       else:
          for i in r.json()['response']:
             __serverchecks[i['hostName']] = i
@@ -243,4 +237,3 @@ class TrafficOps(object):
   
      return r.json()['response']
               
-

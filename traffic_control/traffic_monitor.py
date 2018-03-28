@@ -2,13 +2,11 @@
 @copyright: 2016
 @author: Steve Malenfant http://github.com/smalenfant
 @author: Hank Beatty http://github.com/hbeatty
-@organization: Cox Communications Inc. - Advanced Network Platforms
+@organization:
 @license: Apache-2.0
 """
 #  This file is part of traffic-control-python.
 #
-#  Copyright 2016 Cox Communications Inc.
-#  
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -25,7 +23,8 @@ import sys
 import json
 
 # TODO add raw param to return exactly what is returned from the API
-# TODO make the convert to dict a function. the API retuns a list and I'm converting to dict. make this a public function
+# TODO make the convert to dict a function. the API retuns a list and I'm
+#    converting to dict. make this a public function
 
 class TrafficMonitor(object):
    """ TrafficMonitor Class """
@@ -40,15 +39,15 @@ class TrafficMonitor(object):
       self.s=self.requests.Session()
       self.servers = {}
 
-      tmp = to.get_servers()
-      #print json.dumps(to.get_servers(), indent=3, separators=(',', ': '))
+      tmp = to.get_servers(False)
+      # print json.dumps(tmp, indent=3, separators=(',', ': '))
       for i in tmp:
          if (tmp[i]['type'] == 'RASCAL'):
             self.servers[i] = tmp[i]
             self.servers[i]['url'] = "http://" + i + "." + self.servers[i]['domainName']
             self.servers[i]['fqdn'] = i + "." + self.servers[i]['domainName']
 
-      print json.dumps(self.servers, indent=3, separators=(',', ': '))
+      # print json.dumps(self.servers, indent=3, separators=(',', ': '))
    
    def get_cache_stats(self, tm='', hc='', stats='', wildcard='', cache=''):
       """

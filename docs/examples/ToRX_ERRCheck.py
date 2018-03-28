@@ -3,13 +3,11 @@
 @copyright: 2016
 @author: Steve Malenfant http://github.com/smalenfant
 @author: Hank Beatty http://github.com/hbeatty
-@organization: Cox Communications Inc. - Advanced Network Platforms
+@organization:
 @license: Apache-2.0
 """
 #  This file is part of traffic-control-python.
 #
-#  Copyright 2016 Cox Communications Inc.
-#  
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -24,10 +22,10 @@
 
 
 # example cron entry
-# 0 * * * * root /opt/traffic_ops/app/bin/checks/ToPingCheck.pl -c "{\"base_url\": \"https://localhost\", \"check_name\": \"RX_ERR\", \"name\": \"RX error check\"}" -v 6 >> /var/log/traffic_ops/extensionCheck.log 2>&1
+# 0 * * * * root /opt/traffic_ops/app/bin/checks/ToRX_ERRCheck.py -c "{\"base_url\": \"https://localhost\", \"check_name\": \"RX_ERR\", \"name\": \"RX error check\"}" -v 6 >> /var/log/traffic_ops/extensionCheck.log 2>&1
 #
 # example cron entry with syslog
-# 0 * * * * root /opt/traffic_ops/app/bin/checks/ToPingCheck.pl -c "{\"base_url\": \"https://localhost\", \"check_name\": \"RX_ERR\", \"name\": \"RX error check\", \"syslog_facility\": \"local0\"}" > /dev/null 2>&1
+# 0 * * * * root /opt/traffic_ops/app/bin/checks/ToRX_ERRCheck.py -c "{\"base_url\": \"https://localhost\", \"check_name\": \"RX_ERR\", \"name\": \"RX error check\", \"syslog_facility\": \"local0\"}" > /dev/null 2>&1
 
 import json
 import syslog
@@ -155,19 +153,21 @@ if 'syslog_facility' in conf:
    syslog.openlog('ToChecks',syslog.LOG_NOWAIT,facility)
 
 to_conn = to(conf['base_url'], token = '91504CE6-8E4A-46B2-9F9F-FE7C15228498')
-servers = to_conn.get_servers()
+servers = to_conn.get_servers(False)
 #print json.dumps(servers, indent=3, separators=(',', ': '))
 
 tm_conn = tm(to_conn)
 
 # get the current value
-to_serverchecks = to_conn.get_serverchecks()
+to_serverchecks = to_conn.get_serverchecks(False)
 #print json.dumps(to_serverchecks, indent=3, separators=(',', ': '))
 
 cache_stats = tm_conn.get_cache_stats(stats="system.proc.net.dev",hc="1")
 
 for cache in cache_stats:
    if_stats = cache_stats[cache]['system.proc.net.dev'][-1]['value'].split()
+   if 3 not in if_stats:
+      next
    current = int(if_stats[3]) # current rx errors
    if not args.quiet:
       # post current value
